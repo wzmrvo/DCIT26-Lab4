@@ -1,41 +1,14 @@
-CvSU Mini Store – Lab 3: React Props and Component Communication
+1. Why do we use two separate states, searchText and debouncedSearch, instead of only one?
+searchText has to change on every keystroke, or the text box would feel stuck, because a controlled input shows whatever is in state. debouncedSearch only changes after the user stops typing for 300 ms, and the filtering uses that one. With a single state, the list would re-filter on every key press.
 
-A Mini Product Catalog built with React (Vite). A reusable `ProductCard`
-receives data through props, and a callback prop lets each card tell the
-parent when an item is added to the cart.
+2. What would happen if the debounce effect did not return a cleanup function?
+Every keystroke would start a new timer without cancelling the old one. All those timers would still fire, so the list would update once per keystroke, just delayed, and older values could arrive after newer ones. It wouldn't be a real debounce.
 
-Run
+3. What is the purpose of the dependency array? What happens if it is empty? What if it is left out?
+The dependency array tells React which values an effect depends on, so the effect only re-runs when one of them changes. With [], the effect runs once, right after the first render. If it's left out completely, the effect runs after every render, which is wasteful and can cause infinite loops if the effect sets state.
 
-bash
-npm install
-npm run dev
+4. Why should we avoid sorting the original products array directly?
+.sort() changes the array in place. That mutates shared data, so the original "Default" order is lost and React state or imported data gets modified, which causes bugs. Making a copy first with [...filteredProducts].sort(...) keeps the original unchanged.
 
-
-Guide Questions
-
-1. What is the difference between props and state?
-Props are values passed into a component from its parent, and the component
-only reads them. State is data a component owns and manages itself, and it can
-change over time (using `useState`). When state changes, the component re-renders.
-
-2. Why can a child component not modify the props it receives?
-Props are read-only so data flows in one direction, from parent to child. If a
-child could change its props, the parent's data would change unexpectedly and
-bugs would be hard to trace. Only the component that owns the data can change it.
-
-3. How does the `onAddToCart` callback let data flow from child to parent?
-The parent passes a function down as a prop. When the button is clicked, the
-child calls that function and passes the product title as an argument. The
-function runs in the parent, so the parent receives the data and can update its
-own state (the cart count and last added item).
-
-4. Why is the `key` prop required when rendering a list with `.map()`?
-React uses the key to identify which item is which between renders. If keys are
-missing or duplicated, React may re-use or re-order the wrong elements, which
-can cause incorrect updates, lost input state, or warnings in the console.
-
-5. What does the `children` prop allow that a normal prop does not?
-It lets a parent put any content (text, elements, other components) between the
-opening and closing tags of a component, like `<ProductCard><span>New</span></ProductCard>`.
-A normal prop passes a named value, while `children` lets the component wrap and
-display nested content, which is useful for flexible layouts like badges.
+5. Is the filtered list better stored in its own state, or calculated during rendering?
+It's better calculated during rendering. The list is fully determined by debouncedSearch, category and sortOrder, so storing it would duplicate data and need extra code to keep it in sync, which risks showing a stale list. Calculating it each render is simpler and always correct.

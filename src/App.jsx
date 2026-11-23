@@ -31,6 +31,21 @@ function App() {
     setSortOrder("default");
   };
 
+  // Derived list: calculated during render, not stored in state.
+  const keyword = searchText.trim().toLowerCase();
+  let filteredProducts = products.filter(
+    (p) =>
+      p.title.toLowerCase().includes(keyword) &&
+      (category === "All" || p.category === category)
+  );
+
+  // Copy before sorting so the original products array is never changed.
+  if (sortOrder === "price-asc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+  } else if (sortOrder === "price-desc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+  }
+
   const badges = { 1: "New", 8: "Sale" };
 
   return (
@@ -67,8 +82,12 @@ function App() {
           onClear={handleClear}
         />
 
+        <p className="result-count">
+          Showing {filteredProducts.length} of {products.length} products
+        </p>
+
         <div className="product-grid">
-          {products.map((p) => (
+          {filteredProducts.map((p) => (
             <ProductCard
               key={p.id}
               title={p.title}

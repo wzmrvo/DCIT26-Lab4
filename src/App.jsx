@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import products from "./data/products";
 import ProductCard from "./components/ProductCard";
 import SearchBar from "./components/SearchBar";
@@ -14,6 +14,7 @@ function App() {
 
   // Lab 4 state
   const [searchText, setSearchText] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [sortOrder, setSortOrder] = useState("default");
 
@@ -25,14 +26,23 @@ function App() {
     setLastAdded(title);
   };
 
+  // Debounce: only the final pause in typing updates debouncedSearch.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 300);
+    return () => clearTimeout(timer); // cleanup cancels the previous timer
+  }, [searchText]);
+
   const handleClear = () => {
     setSearchText("");
+    setDebouncedSearch("");
     setCategory("All");
     setSortOrder("default");
   };
 
   // Derived list: calculated during render, not stored in state.
-  const keyword = searchText.trim().toLowerCase();
+  const keyword = debouncedSearch.trim().toLowerCase();
   let filteredProducts = products.filter(
     (p) =>
       p.title.toLowerCase().includes(keyword) &&

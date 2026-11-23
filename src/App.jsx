@@ -34,13 +34,6 @@ function App() {
     return () => clearTimeout(timer); // cleanup cancels the previous timer
   }, [searchText]);
 
-  const handleClear = () => {
-    setSearchText("");
-    setDebouncedSearch("");
-    setCategory("All");
-    setSortOrder("default");
-  };
-
   // Derived list: calculated during render, not stored in state.
   const keyword = debouncedSearch.trim().toLowerCase();
   let filteredProducts = products.filter(
@@ -55,6 +48,18 @@ function App() {
   } else if (sortOrder === "price-desc") {
     filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
   }
+
+  // Tab title follows the number of results.
+  useEffect(() => {
+    document.title = `CvSU Mini Store (${filteredProducts.length} results)`;
+  }, [filteredProducts.length]);
+
+  const handleClear = () => {
+    setSearchText("");
+    setDebouncedSearch("");
+    setCategory("All");
+    setSortOrder("default");
+  };
 
   const badges = { 1: "New", 8: "Sale" };
 
@@ -96,20 +101,26 @@ function App() {
           Showing {filteredProducts.length} of {products.length} products
         </p>
 
-        <div className="product-grid">
-          {filteredProducts.map((p) => (
-            <ProductCard
-              key={p.id}
-              title={p.title}
-              price={p.price}
-              category={p.category}
-              inStock={p.inStock}
-              onAddToCart={handleAddToCart}
-            >
-              {badges[p.id] && <span>{badges[p.id]}</span>}
-            </ProductCard>
-          ))}
-        </div>
+        {filteredProducts.length === 0 ? (
+          <p className="empty-state">
+            No products found. Try a different keyword or category.
+          </p>
+        ) : (
+          <div className="product-grid">
+            {filteredProducts.map((p) => (
+              <ProductCard
+                key={p.id}
+                title={p.title}
+                price={p.price}
+                category={p.category}
+                inStock={p.inStock}
+                onAddToCart={handleAddToCart}
+              >
+                {badges[p.id] && <span>{badges[p.id]}</span>}
+              </ProductCard>
+            ))}
+          </div>
+        )}
 
         <footer className="footer">CvSU Mini Store · DCIT26</footer>
       </div>

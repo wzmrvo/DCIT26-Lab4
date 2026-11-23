@@ -34,6 +34,7 @@ function ProductCard({
       <p className={inStock ? "stock in" : "stock out"}>
         {inStock ? "In Stock" : "Out of Stock"}
       </p>
+      {inStock && <p className="ship">🚚 Free campus pick-up</p>}
       <button disabled={!inStock} onClick={() => onAddToCart(title)}>
         Add to Cart
       </button>

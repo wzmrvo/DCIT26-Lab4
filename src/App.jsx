@@ -65,20 +65,35 @@ function App() {
 
   return (
     <div className="theme-root" data-theme={theme}>
+      <div className="announce">
+        🚚 Free campus pick-up · 🔒 Secure checkout · ↩️ Easy returns
+      </div>
+
       <div className="app">
         <header className="header">
-          <div>
-            <h1>CvSU Mini Store</h1>
-            <p>Browse school and tech essentials</p>
+          <div className="brand">
+            <span className="logo" aria-hidden="true">
+              🛍️
+            </span>
+            <div>
+              <h1>CvSU Mini Store</h1>
+              <p>School and tech essentials for every student</p>
+            </div>
           </div>
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
-          </button>
+
+          <div className="header-actions">
+            <span className="cart-chip" aria-label={`Cart: ${cartCount} items`}>
+              🛒 Cart <strong>{cartCount}</strong>
+            </span>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            >
+              {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+            </button>
+          </div>
         </header>
 
         <p className="cart-message" key={cartCount}>
@@ -97,9 +112,12 @@ function App() {
           onClear={handleClear}
         />
 
-        <p className="result-count">
-          Showing {filteredProducts.length} of {products.length} products
-        </p>
+        <div className="section-head">
+          <h2>Shop Products</h2>
+          <p className="result-count">
+            Showing {filteredProducts.length} of {products.length} products
+          </p>
+        </div>
 
         {filteredProducts.length === 0 ? (
           <p className="empty-state">
@@ -122,7 +140,15 @@ function App() {
           </div>
         )}
 
-        <footer className="footer">CvSU Mini Store · DCIT26</footer>
+        <footer className="footer">
+          <div className="trust-row">
+            <span>🚚 Free campus pick-up</span>
+            <span>🔒 Secure checkout</span>
+            <span>↩️ Easy returns</span>
+            <span>💬 Student support</span>
+          </div>
+          <p>CvSU Mini Store · DCIT26</p>
+        </footer>
       </div>
     </div>
   );
